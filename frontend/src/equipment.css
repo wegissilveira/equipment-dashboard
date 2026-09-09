@@ -1,0 +1,74 @@
+.equipment-page {
+   width: min(640px, 100%);
+   margin: 0 auto;
+   padding: 32px 20px;
+   text-align: left;
+   box-sizing: border-box;
+}
+
+.equipment-page h1 {
+   font-size: 32px;
+   margin: 0 0 24px;
+}
+
+.equipment-form {
+   display: grid;
+   gap: 12px;
+   margin-bottom: 24px;
+}
+
+.equipment-form label {
+   display: grid;
+   gap: 6px;
+   color: var(--text-h);
+   font-size: 14px;
+}
+
+.equipment-form input,
+.equipment-form select {
+   font: inherit;
+   color: var(--text-h);
+   background: var(--bg);
+   border: 1px solid var(--border);
+   border-radius: 6px;
+   padding: 8px 10px;
+}
+
+.equipment-form button,
+.equipment-list button {
+   font: inherit;
+   cursor: pointer;
+   border-radius: 6px;
+   padding: 8px 12px;
+}
+
+.equipment-form button {
+   color: #fff;
+   background: var(--accent);
+   border: 1px solid transparent;
+   justify-self: start;
+}
+
+.equipment-list {
+   list-style: none;
+   margin: 0;
+   padding: 0;
+   display: grid;
+   gap: 8px;
+}
+
+.equipment-list li {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   gap: 12px;
+   padding: 10px 12px;
+   border: 1px solid var(--border);
+   border-radius: 6px;
+}
+
+.equipment-list button {
+   color: var(--text-h);
+   background: var(--accent-bg);
+   border: 1px solid var(--accent-border);
+}
