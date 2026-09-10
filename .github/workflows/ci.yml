@@ -1,92 +1,89 @@
 name: CI
 
 on:
-    pull_request:
-    push:
-        branches:
-            - main
+   pull_request:
+   push:
+      branches:
+         - main
 
 jobs:
-    test:
-        runs-on: ubuntu-latest
+   test:
+      runs-on: ubuntu-latest
 
-        env:
-            DB_HOST: localhost
-            DB_PORT: 5432
-            DB_NAME: equipment_dashboard
-            DB_USER: postgres
-            DB_PASSWORD: postgres
-            PGPASSWORD: postgres
+      env:
+         DB_HOST: localhosttt
+         DB_PORT: 5432
+         DB_NAME: equipment_dashboard
+         DB_USER: postgres
+         DB_PASSWORD: postgres
+         PGPASSWORD: postgres
 
-        services:
-            postgres:
-                image: postgres:16
+      services:
+         postgres:
+            image: postgres:16
 
-                env:
-                    POSTGRES_USER: postgres
-                    POSTGRES_PASSWORD: postgres
-                    POSTGRES_DB: equipment_dashboard
+            env:
+               POSTGRES_USER: postgres
+               POSTGRES_PASSWORD: postgres
+               POSTGRES_DB: equipment_dashboard
 
-                ports:
-                    - 5432:5432
+            ports:
+               - 5432:5432
 
-                options: >-
-                    --health-cmd pg_isready
-                    --health-interval 10s
-                    --health-timeout 5s
-                    --health-retries 5
+            options: >-
+               --health-cmd pg_isready
+               --health-interval 10s
+               --health-timeout 5s
+               --health-retries 5
 
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
+      steps:
+         - name: Checkout code
+           uses: actions/checkout@v4
 
-            - name: Setup Node
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 22
+         - name: Setup Node
+           uses: actions/setup-node@v4
+           with:
+              node-version: 22
 
-            - name: Install frontend dependencies
-              working-directory: frontend
-              run: npm ci
+         - name: Install frontend dependencies
+           working-directory: frontend
+           run: npm ci
 
-            - name: Install backend dependencies
-              working-directory: backend
-              run: npm ci
+         - name: Install backend dependencies
+           working-directory: backend
+           run: npm ci
 
-            - name: Setup database
-              working-directory: backend
-              run: |
-                  psql \
-                    -h "$DB_HOST" \
-                    -U "$DB_USER" \
-                    -d "$DB_NAME" \
-                    -f db/schema.sql
+         - name: Setup database
+           working-directory: backend
+           run: |
+              npm run db:migrate
+              npm run db:seed
 
-            - name: Run tests
-              working-directory: frontend
-              run: npm test
+         - name: Run tests
+           working-directory: frontend
+           run: npm test
 
-            - name: Build frontend
-              working-directory: frontend
-              run: npm run build
+         - name: Build frontend
+           working-directory: frontend
+           run: npm run build
 
-            - name: Start backend
-              working-directory: backend
-              run: node server.js &
+         - name: Start backend
+           working-directory: backend
+           run: node server.js &
 
-            - name: Install Playwright browsers
-              working-directory: frontend
-              run: npx playwright install --with-deps
+         - name: Install Playwright browsers
+           working-directory: frontend
+           run: npx playwright install --with-deps
 
-            - name: Start frontend
-              working-directory: frontend
-              run: npm run dev -- --host 0.0.0.0 &
+         - name: Start frontend
+           working-directory: frontend
+           run: npm run dev -- --host 0.0.0.0 &
 
-            - name: Wait for services
-              timeout-minutes: 2
-              working-directory: frontend
-              run: npx wait-on -t 60000 http-get://localhost:3001/api/equipment http-get://localhost:5173
+         - name: Wait for services
+           timeout-minutes: 2
+           working-directory: frontend
+           run: npx wait-on -t 60000 http-get://localhost:3001/api/equipment http-get://localhost:5173
 
-            - name: Run E2E tests
-              working-directory: frontend
-              run: npm run test:e2e
+         - name: Run E2E tests
+           working-directory: frontend
+           run: npm run test:e2e

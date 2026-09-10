@@ -1,0 +1,6 @@
+CREATE TABLE equipment (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  model TEXT,
+  status TEXT
+);
