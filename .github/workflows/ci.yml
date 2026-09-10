@@ -11,6 +11,24 @@ jobs:
    test:
       runs-on: ubuntu-latest
 
+      services:
+         postgres:
+            image: postgres:16
+
+            env:
+               POSTGRES_USER: postgres
+               POSTGRES_PASSWORD: postgres
+               POSTGRES_DB: equipment_dashboard
+
+            ports:
+               - 5432:5432
+
+            options: >-
+               --health-cmd pg_isready
+               --health-interval 10s
+               --health-timeout 5s
+               --health-retries 5
+
       steps:
          - name: Checkout code
            uses: actions/checkout@v4
@@ -23,6 +41,21 @@ jobs:
          - name: Install frontend dependencies
            working-directory: frontend
            run: npm ci
+
+         - name: Install backend dependencies
+           working-directory: backend
+           run: npm ci
+
+         - name: Setup database
+           working-directory: backend
+           env:
+              PGPASSWORD: postgres
+           run: |
+              psql \
+                -h localhost \
+                -U postgres \
+                -d equipment_dashboard \
+                -f db/schema.sql
 
          - name: Run tests
            working-directory: frontend

@@ -16,9 +16,11 @@ app.use(express.json());
 // });
 
 const pool = new Pool({
-   host: "localhost",
-   database: "equipment_dashboard",
-   port: 5432,
+   host: process.env.DB_HOST || "localhost",
+   database: process.env.DB_NAME || "equipment_dashboard",
+   user: process.env.DB_USER || "postgres",
+   password: process.env.DB_PASSWORD || "postgres",
+   port: Number(process.env.DB_PORT) || 5432,
 });
 
 app.get("/api/equipment", async (req, res) => {
