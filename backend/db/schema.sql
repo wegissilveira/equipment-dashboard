@@ -1,7 +1,7 @@
 CREATE TABLE equipment (
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
-  category TEXT,
+  model TEXT,
   status TEXT
 );
 
@@ -18,7 +18,7 @@ VALUES
   ('ABC Equipment'),
   ('United Rentals');
 
-INSERT INTO equipment (name, category, status, dealer_id)
+INSERT INTO equipment (name, model, status, dealer_id)
 VALUES
   ('Excavator', 'Heavy', 'Available', 1),
   ('Crane', 'Heavy', 'Rented', 2),
