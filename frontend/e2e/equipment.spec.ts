@@ -1,17 +1,21 @@
 import { test as base, expect } from "@playwright/test";
 
-const APP_URL = "http://localhost:5173";
-const API_URL = "http://localhost:3001/api/equipment";
-
 type EquipmentFixtures = {
+   apiURL: string;
    createdEquipment: { id: number; name: string };
    newEquipmentName: string;
 };
 
 const test = base.extend<EquipmentFixtures>({
-   createdEquipment: async ({ request }, use) => {
+   apiURL: [
+      process.env.API_URL ??
+         process.env.VITE_API_URL ??
+         "http://localhost:3001/api/equipment",
+      { option: true },
+   ],
+   createdEquipment: async ({ request, apiURL }, use) => {
       const name = `E2E Equipment ${Date.now()}`;
-      const res = await request.post(API_URL, {
+      const res = await request.post(apiURL, {
          data: {
             name,
             category: "E2E Model",
@@ -23,13 +27,13 @@ const test = base.extend<EquipmentFixtures>({
 
       await use({ id: created.id, name: created.name });
 
-      await request.delete(`${API_URL}/${created.id}`);
+      await request.delete(`${apiURL}/${created.id}`);
    },
-   newEquipmentName: async ({ page, request }, use) => {
+   newEquipmentName: async ({ page, request, apiURL }, use) => {
       const name = `E2E Equipment ${Date.now()}`;
       const created = page.waitForResponse(
          (response) =>
-            response.url() === API_URL &&
+            response.url() === apiURL &&
             response.request().method() === "POST" &&
             response.ok(),
       );
@@ -38,18 +42,18 @@ const test = base.extend<EquipmentFixtures>({
 
       const res = await created;
       const { id } = await res.json();
-      await request.delete(`${API_URL}/${id}`);
+      await request.delete(`${apiURL}/${id}`);
    },
 });
 
 test("user can see equipment", async ({ page }) => {
-   await page.goto(APP_URL);
+   await page.goto("/");
 
    await expect(page.getByText("Excavator")).toBeVisible();
 });
 
 test("user can add equipment", async ({ page, newEquipmentName }) => {
-   await page.goto(APP_URL);
+   await page.goto("/");
 
    const nameInput = page.getByRole("textbox", { name: "name" });
    const categoryInput = page.getByRole("textbox", { name: "category" });
@@ -68,7 +72,7 @@ test("user can add equipment", async ({ page, newEquipmentName }) => {
 });
 
 test("user can delete equipment", async ({ page, createdEquipment }) => {
-   await page.goto(APP_URL);
+   await page.goto("/");
 
    const equipment = page.getByRole("listitem", {
       name: createdEquipment.name,

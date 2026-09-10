@@ -17,6 +17,9 @@ jobs:
          DB_USER: postgres
          DB_PASSWORD: postgres
          PGPASSWORD: postgres
+         APP_URL: http://localhost:5173
+         API_URL: http://localhost:3001/api/equipment
+         VITE_API_URL: http://localhost:3001/api/equipment
 
       services:
          postgres:
@@ -67,22 +70,9 @@ jobs:
            working-directory: frontend
            run: npm run build
 
-         - name: Start backend
-           working-directory: backend
-           run: node server.js &
-
          - name: Install Playwright browsers
            working-directory: frontend
            run: npx playwright install --with-deps
-
-         - name: Start frontend
-           working-directory: frontend
-           run: npm run dev -- --host 0.0.0.0 &
-
-         - name: Wait for services
-           timeout-minutes: 2
-           working-directory: frontend
-           run: npx wait-on -t 60000 http-get://localhost:3001/api/equipment http-get://localhost:5173
 
          - name: Run E2E tests
            working-directory: frontend

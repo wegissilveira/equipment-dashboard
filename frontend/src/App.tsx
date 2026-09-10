@@ -3,7 +3,8 @@ import { EquipmentForm } from "./components/EquipmentForm";
 import { EquipmentList, type Equipment } from "./components/EquipmentList";
 import "./equipment.css";
 
-export const BASE_URL = "http://localhost:3001/api/equipment";
+export const BASE_URL =
+   import.meta.env.VITE_API_URL ?? "http://localhost:3001/api/equipment";
 
 function App() {
    const [equipment, setEquipment] = useState<Equipment[]>([]);
