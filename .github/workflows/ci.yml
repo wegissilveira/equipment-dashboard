@@ -11,7 +11,7 @@ jobs:
       runs-on: ubuntu-latest
 
       env:
-         DB_HOST: localhosttt
+         DB_HOST: localhost
          DB_PORT: 5432
          DB_NAME: equipment_dashboard
          DB_USER: postgres
